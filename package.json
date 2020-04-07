@@ -1,0 +1,20 @@
+{
+  "name": "znk-notifications",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.19.2",
+    "bull": "^3.13.0",
+    "ejs": "^3.0.2",
+    "mongodb": "^3.5.5"
+  },
+  "devDependencies": {
+    "dotenv": "^8.2.0"
+  }
+}
