@@ -1,34 +1,51 @@
 const MongoClient = require('mongodb').MongoClient;
+const connections = {}
 
-let model = {}
+async function connect(mongoURL) {
+  connections[mongoURL].connecting = true
 
-model.getTemplate = async function(templateKey) {
-  const client = new MongoClient(process.env.MONGO_URL, { useUnifiedTopology: true } )
-  return new Promise((res, rej) => {
-    client.connect(function(err){
-      if(err){
-        console.log('ERROR: %s', err)
-        rej(err)
-      } else {
-        const templatesRef = client.db(process.env.MONGO_DBNAME).collection('msgTemplates')
-        templatesRef.find({templateKey}).toArray((function (err, arr) {
-          client.close()
-          if(err){
-            console.log('ERROR: %s', err)
-            rej(err)
-          } else {
-            console.log('Response gotten: %s', JSON.stringify(arr))
-            if(arr.length){
-              res(arr[0])
-            } else {
-              res(null)
-            }
-          }
-        }))
-      }
-    })
-  })
+  const options = {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  }
+
+  const client = await MongoClient.connect(
+    mongoURL,
+    options,
+  )
+
+  const dbName = process.env.MONGO_DBNAME
+  connections[mongoURL].client = client
+  connections[mongoURL].database = client.db(dbName)
+  connections[mongoURL].connecting = false
+
+  for (const resolve of connections[mongoURL].resolvers) {
+    resolve(connections[mongoURL])
+  }
+
+  return connections[mongoURL]
 }
+let model = {}
+model.connectToDatabase = async function (mongoURL) {
+  if (!mongoURL) {
+    throw new Error('Mongo URL env is required')
+  }
 
+  connections[mongoURL] = connections[mongoURL] || {
+    connecting: false,
+    resolvers: [],
+    client: null,
+    database: null,
+  }
+
+  if (connections[mongoURL].database) {
+    return connections[mongoURL]
+  }
+
+  if (!connections[mongoURL].connecting) {
+    return connect(mongoURL)
+  }
+
+  return new Promise(resolve => connections[mongoURL].resolvers.push(resolve))
+}
 module.exports = model
-

@@ -10,7 +10,12 @@ model.render = function(string, obj){
 }
 
 model.findOne = async function(templateKey){
-  return mongo.getTemplate(templateKey)
+  const client = await mongo.connectToDatabase(process.env.MONGO_URL)
+  const templates = await client.database.collection('msgTemplates').find({templateKey}).toArray()
+  if(templates.length){
+    return templates[0]
+  }
+  return null
 }
 
 module.exports = model;
