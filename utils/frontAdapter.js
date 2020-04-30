@@ -14,7 +14,10 @@ model.sendMessage = async function (message, to){
   try{
     const response = await frontApi.post(`/channels/${process.env.FRONT_CHANNEL_ID}/messages`, {
       to: to,
-      body: message
+      body: message,
+      options: {
+        archive: true,
+      },
     })
     console.log({response})
     return true
