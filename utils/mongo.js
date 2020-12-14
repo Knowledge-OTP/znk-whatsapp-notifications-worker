@@ -8,11 +8,12 @@ async function connect(mongoURL) {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   }
+  try{
+    const client = await MongoClient.connect(
+        mongoURL,
+        options,
+    )
 
-  const client = await MongoClient.connect(
-    mongoURL,
-    options,
-  )
 
   const dbName = process.env.MONGO_DBNAME
   connections[mongoURL].client = client
@@ -24,6 +25,10 @@ async function connect(mongoURL) {
   }
 
   return connections[mongoURL]
+  } catch(e){
+    console.log('mongo failed')
+    console.log({e})
+  }
 }
 let model = {}
 model.connectToDatabase = async function (mongoURL) {
@@ -45,7 +50,14 @@ model.connectToDatabase = async function (mongoURL) {
   if (!connections[mongoURL].connecting) {
     return connect(mongoURL)
   }
+try {
+  return new Promise(resolve => connections[mongoURL].resolvers.push(resolve)).catch(e => {
+    console.log({e})
+    console.log('Promise Creation Failed')
+  })
 
-  return new Promise(resolve => connections[mongoURL].resolvers.push(resolve))
+} catch(e){
+    console.log('mongo couldn create')
+}
 }
 module.exports = model
