@@ -50,14 +50,13 @@ model.connectToDatabase = async function (mongoURL) {
   if (!connections[mongoURL].connecting) {
     return connect(mongoURL)
   }
-try {
-  return new Promise(resolve => connections[mongoURL].resolvers.push(resolve)).catch(e => {
-    console.log({e})
-    console.log('Promise Creation Failed')
-  })
-
-} catch(e){
-    console.log('mongo couldn create')
-}
+  try {
+    return new Promise(resolve => connections[mongoURL].resolvers.push(resolve)).catch(e => {
+      console.log({e})
+      console.log('Promise Creation Failed')
+    })
+  } catch(e){
+      console.log('mongo couldn create')
+  }
 }
 module.exports = model
