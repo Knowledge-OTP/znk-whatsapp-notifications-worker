@@ -1,0 +1,115 @@
+version: 2.1
+
+
+executors:
+  node:
+    docker:
+      - image: circleci/node:12.19.0
+
+jobs:
+  build:
+    executor: node
+    working_directory: ~/znk-whatsapp-notifications-worker
+
+    steps:
+      - checkout:
+          path: ~/znk-whatsapp-notifications-worker
+
+      # Restore local dependencies from cache
+      - restore_cache:
+          keys:
+            - dependencies-{{ checksum "package.json" }}
+            - dependencies-
+
+      # Install dependencies
+      - run:
+          name: Install local dependencies
+          command: yarn install
+
+      # Cache local dependencies
+      - save_cache:
+          key: dependencies-{{ checksum "package.json" }}
+          paths:
+            - node_modules
+     # Save Cache
+      - save_cache:
+          key: znk-whatsapp-notifications-worker-{{ .Branch }}-{{ .Environment.CIRCLE_SHA1 }}
+          paths:
+            - utils
+            - .env
+            - package.json
+            - .ebextensions
+            - ./*.js
+  deploy-server:
+    parameters:
+      application_name:
+        type: string
+      environment_name:
+        type: string
+        default: production
+
+    executor: node
+    working_directory: ~/znk-whatsapp-notifications-worker
+
+    steps:
+      - attach_workspace:
+          at: ~/znk-whatsapp-notifications-worker
+      # Restore project cache
+      - restore_cache:
+          key: znk-whatsapp-notifications-worker-{{ .Branch }}-{{ .Environment.CIRCLE_SHA1 }}
+      # Restore dependencies cache
+      - restore_cache:
+          key: dependencies-{{ checksum "package.json" }}
+      - run:
+          name: Check project folder
+          command: ls
+      - run:
+          name: Show current branch
+          command: echo ${CIRCLE_BRANCH}
+      # Install AWS EB CLI
+      - run:
+          name: Download Python prerequisites
+          command: sudo apt-get install -y build-essential zlib1g-dev libssl-dev libncurses-dev libffi-dev libsqlite3-dev libreadline-dev libbz2-dev
+      - run:
+          name: Install git
+          command: sudo apt-get install -y git
+      - run:
+          name: Clone aws-cli scripts
+          command: git clone https://github.com/aws/aws-elastic-beanstalk-cli-setup.git
+      - run:
+          name: Run AWS EB scripts
+          command: ./aws-elastic-beanstalk-cli-setup/scripts/bundled_installer
+      - run:
+          name: Config path variables
+          command: echo 'export PATH="/home/circleci/.ebcli-virtual-env/executables:$PATH"' >> $BASH_ENV
+      # Deploy to EB
+      - deploy:
+          name: Deploy to EB
+          command: |
+            eb init "<< parameters.application_name >>" -r ${AWS_REGION} -p "node.js"
+            eb use "<< parameters.environment_name >>"
+            eb deploy
+
+workflows:
+  version: 2
+
+  # Workflows defined for each package.
+  server:
+    jobs:
+      - build:
+          name: server-build
+          filters:
+            branches:
+              only:
+                - master
+                - dev
+      - deploy-server:
+          name: server-deploy-dev
+          application_name: whatsapp-notifications-worker
+          environment_name: whatsapp-notifications-worker-dev-1
+          filters:
+            branches:
+              only:
+                - dev
+          requires:
+            - server-build
