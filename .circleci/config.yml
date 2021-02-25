@@ -36,10 +36,11 @@ jobs:
           key: znk-whatsapp-notifications-worker-{{ .Branch }}-{{ .Environment.CIRCLE_SHA1 }}
           paths:
             - utils
+            - processors
             - .env
             - package.json
             - .ebextensions
-            - ./*.js
+            - index.js
   deploy-server:
     parameters:
       application_name:
@@ -82,6 +83,9 @@ jobs:
       - run:
           name: Config path variables
           command: echo 'export PATH="/home/circleci/.ebcli-virtual-env/executables:$PATH"' >> $BASH_ENV
+      - run:
+          name: Remove EB CLI installation files
+          command: rm -rf ./aws-elastic-beanstalk-cli-setup
       # Deploy to EB
       - deploy:
           name: Deploy to EB

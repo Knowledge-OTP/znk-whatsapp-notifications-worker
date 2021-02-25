@@ -1,5 +1,5 @@
-const templateModel = require('./utils/templater')
-const frontAppService = require('./utils/frontAdapter')
+const templateModel = require('../utils/templater')
+const frontAppService = require('../utils/frontAdapter')
 module.exports = async function(job){
   const {templateKey, recipients, arguments} = job.data
   const templateInfo = await templateModel.findOne(templateKey)

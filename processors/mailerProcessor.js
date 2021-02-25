@@ -1,4 +1,4 @@
-const mailerService = require('./utils/mandrill')
+const mailerService = require('../utils/mandrilll')
 
 module.exports = async function(job) {
     const {mailOptions} = job.data
