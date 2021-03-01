@@ -21,9 +21,10 @@ module.exports = {
                 'Reply-to': mailOptions.replyToEmail,
             }
         }
+        console.log('Message Payload: \n %s',JSON.stringify(message, null, 2))
         const mailTemplate = {
             template_name: mailOptions.templateName,
-            template_content: templateContent,
+            template_content: [{name: 'TEMPLATE_CONTENT', content: 'content'}],
             message: message,
             async: false,
         };
