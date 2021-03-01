@@ -5,8 +5,9 @@ module.exports = async function(job) {
     try {
         const mailSent = await mailerService.sendEmail(mailOptions)
         return mailSent
-    } catch (e) {
+    } catch (err) {
         console.log('Errored')
+        console.log(JSON.stringify(err))
         slackService.sendMessage('Mailer Error: %s', err)
     }
 }
