@@ -1,7 +1,5 @@
-require('dotenv').config({path: '.env/env.dev.json'})
-
 const messageProcessor = require('./processors/messageProcessor')
-const mailerProcessor = require('./processors/messageProcessor')
+const mailerProcessor = require('./processors/mailerProcessor')
 const Queue = require('bull');
 
 const redis = {
