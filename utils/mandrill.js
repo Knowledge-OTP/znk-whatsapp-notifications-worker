@@ -27,16 +27,24 @@ module.exports = {
             message: message,
             async: false,
         };
-        return new Promise((res, rej) =>{
-            mandrillClient.messages.sendTemplate(
-                mailTemplate,
-                (result) => {
-                    console.log('Email sent successfully: %s', JSON.stringify(result))
-                    res(result)
-                }, (err) => {
-                    slackService.sendMessage('Mailer Error: %s', err)
-                    rej(err)
-                })
+        console.log(process.env.MANDRILL_API_KEY)
+        console.log('Mandrill Payload: \n %s',JSON.stringify(mailTemplate, null, 2))
+        return new Promise((res, rej) => {
+            try {
+                mandrillClient.messages.sendTemplate(
+                    mailTemplate,
+                    (result) => {
+                        console.log('Email sent successfully: %s', JSON.stringify(result))
+                        res(result)
+                    }, (err) => {
+                        slackService.sendMessage('Mailer Error: %s', err)
+                        rej(err)
+                    })
+            } catch (e) {
+                console.log('unexpected error')
+                console.log(e)
+                rej(e)
+            }
         })
     }
 }
