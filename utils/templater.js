@@ -10,7 +10,6 @@ model.render = function(string, obj){
 }
 
 model.findOne = async function(templateKey){
-
   try{
     const client = await mongo.connectToDatabase(process.env.MONGO_URL)
     const templates = await client.database.collection('msgTemplates').find({templateKey}).toArray()

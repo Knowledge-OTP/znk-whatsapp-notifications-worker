@@ -1,19 +1,25 @@
 require('dotenv').config({path: '.env/env.dev.json'})
 
-const messageProcessor = require('./messageProcessor')
+const messageProcessor = require('./processors/messageProcessor')
+const mailerProcessor = require('./processors/messageProcessor')
 const Queue = require('bull');
 
+const redis = {
+  host: process.env.REDIS_ENDPOINT,
+  port: process.env.REDIS_PORT,
+  password: process.env.REDIS_PASS,
+}
+// Whatsapp/Frontapp Queue
 const messagerQueue = new Queue('messager', {
-  redis: {
-    host: process.env.REDIS_ENDPOINT,
-    port: process.env.REDIS_PORT,
-    password: process.env.REDIS_PASS,
-  },
+  redis,
 })
-
 messagerQueue.process(messageProcessor);
 
-
+// Mandrill Queue
+const mailerQueue = new Queue('mailer', {
+  redis,
+})
+mailerQueue.process(mailerProcessor)
 
 var http = require('http');
 try{
