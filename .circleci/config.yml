@@ -5,7 +5,9 @@ executors:
   node:
     docker:
       - image: circleci/node:12.19.0
-
+  python:
+    docker:
+      - image: cimg/python:3.7.4-node
 jobs:
   build:
     executor: node
@@ -49,7 +51,7 @@ jobs:
         type: string
         default: production
 
-    executor: node
+    executor: python
     working_directory: ~/znk-whatsapp-notifications-worker
 
     steps:
