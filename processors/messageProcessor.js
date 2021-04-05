@@ -3,6 +3,7 @@ const frontAppService = require('../utils/frontAdapter')
 module.exports = async function(job){
   const {templateKey, recipients, arguments} = job.data
   const templateInfo = await templateModel.findOne(templateKey)
+  const shouldSend = process.env.ENABLE_SENDING
   if(templateInfo){
     const message = templateModel.render(templateInfo.message, arguments)
     console.log('--0---')
@@ -10,9 +11,9 @@ module.exports = async function(job){
     console.log('to:')
     console.log({recipients})
     console.log('--0---')
-    return frontAppService.sendMessage(message, recipients)
+    return shouldSend ? frontAppService.sendMessage(message, recipients) : false
   } else {
     console.log('no Template Found')
   }
-  return templateInfo
+  return false
 }
