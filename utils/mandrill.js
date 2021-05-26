@@ -38,7 +38,7 @@ module.exports = {
                         console.log('Email sent successfully: %s', JSON.stringify(result))
                         res(result)
                     }, (err) => {
-                        slackService.sendMessage('Mailer Error: %s', err)
+                        slackService.sendMessage(`Mailer Error: \`\`\`${err.toString()}\`\`\``)
                         rej(err)
                     })
             } catch (e) {
