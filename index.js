@@ -20,11 +20,11 @@ const mailerQueue = new Queue('mailer', {
 mailerQueue.process(mailerProcessor)
 
 var http = require('http');
-try{
+try {
   http.createServer(function (req, res) {
     res.write('OK!');
     res.end(); //end the response
-  }).listen(8081);
+  }).listen(8080);
 } catch(e){
   console.log('http server errored')
   console.log({e})
