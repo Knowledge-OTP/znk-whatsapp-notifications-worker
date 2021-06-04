@@ -107,6 +107,6 @@ workflows:
           filters:
             branches:
               only:
-                - dev
+                - master
           requires:
             - server-build
