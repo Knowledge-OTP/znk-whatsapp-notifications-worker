@@ -1,13 +1,11 @@
 version: 2.1
 
-
 executors:
   node:
     docker:
-      - image: circleci/node:12.19.0
-  python:
-    docker:
-      - image: cimg/python:3.7.4-node
+      - image: circleci/node:14.16.1
+orbs:
+  eb: circleci/aws-elastic-beanstalk@1.0.2
 jobs:
   build:
     executor: node
@@ -50,8 +48,8 @@ jobs:
       environment_name:
         type: string
         default: production
-
-    executor: python
+    docker:
+      - image: 'cimg/base:stable'
     working_directory: ~/znk-whatsapp-notifications-worker
 
     steps:
@@ -70,24 +68,7 @@ jobs:
           name: Show current branch
           command: echo ${CIRCLE_BRANCH}
       # Install AWS EB CLI
-      - run:
-          name: Download Python prerequisites
-          command: sudo apt-get install -y build-essential zlib1g-dev libssl-dev libncurses-dev libffi-dev libsqlite3-dev libreadline-dev libbz2-dev
-      - run:
-          name: Install git
-          command: sudo apt-get install -y git
-      - run:
-          name: Clone aws-cli scripts
-          command: git clone https://github.com/aws/aws-elastic-beanstalk-cli-setup.git
-      - run:
-          name: Run AWS EB scripts
-          command: ./aws-elastic-beanstalk-cli-setup/scripts/bundled_installer
-      - run:
-          name: Config path variables
-          command: echo 'export PATH="/home/circleci/.ebcli-virtual-env/executables:$PATH"' >> $BASH_ENV
-      - run:
-          name: Remove EB CLI installation files
-          command: rm -rf ./aws-elastic-beanstalk-cli-setup
+      - eb/setup
       # Deploy to EB
       - deploy:
           name: Deploy to EB
@@ -113,6 +94,16 @@ workflows:
           name: server-deploy-dev
           application_name: whatsapp-notifications-worker
           environment_name: whatsapp-notifications-worker-dev-1
+          filters:
+            branches:
+              only:
+                - dev
+          requires:
+            - server-build
+      - deploy-server:
+          name: server-deploy-prod
+          application_name: znk-api-v2
+          environment_name: notificationsWorker
           filters:
             branches:
               only:
