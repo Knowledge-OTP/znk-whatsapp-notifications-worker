@@ -28,7 +28,6 @@ module.exports = {
             message: message,
             async: false,
         };
-        console.log(process.env.MANDRILL_API_KEY)
         console.log('Mandrill Payload: \n %s',JSON.stringify(mailTemplate, null, 2))
         return new Promise((res, rej) => {
             try {
