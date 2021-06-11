@@ -21,14 +21,12 @@ module.exports = {
                 'Reply-to': mailOptions.replyToEmail,
             }
         }
-        console.log('Message Payload: \n %s',JSON.stringify(message, null, 2))
         const mailTemplate = {
             template_name: mailOptions.templateName,
             template_content: [{name: 'TEMPLATE_CONTENT', content: 'content'}],
             message: message,
             async: false,
         };
-        console.log('Mandrill Payload: \n %s',JSON.stringify(mailTemplate, null, 2))
         return new Promise((res, rej) => {
             try {
                 mandrillClient.messages.sendTemplate(
@@ -37,12 +35,17 @@ module.exports = {
                         console.log('Email sent successfully: %s', JSON.stringify(result))
                         res(result)
                     }, (err) => {
-                        slackService.sendMessage(`Mailer Error: \`\`\`${err.toString()}\`\`\``)
+                        console.log('MANDRILL ERROR')
+                        console.log(err)
+                        console.log('Mandrill Payload: \n %s',JSON.stringify(mailTemplate, null, 2))
+                        slackService.sendMessage(`Mandrill Send Error: \`\`\`${JSON.stringify(err, null, 2)}\`\`\``)
                         rej(err)
                     })
             } catch (e) {
                 console.log('unexpected error')
                 console.log(e)
+                console.log('Mandrill Payload: \n %s',JSON.stringify(mailTemplate, null, 2))
+                slackService.sendMessage(`Unexpected Mailer Error: \`\`\`${JSON.stringify(err, null, 2)}\`\`\``)
                 rej(e)
             }
         })

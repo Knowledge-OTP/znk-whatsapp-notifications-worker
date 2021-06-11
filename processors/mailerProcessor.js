@@ -8,6 +8,6 @@ module.exports = async function(job) {
     } catch (err) {
         console.log('Errored')
         console.log(JSON.stringify(err))
-        await slackService.sendMessage(`Mailer Error: \`\`\`${err.toString()}\`\`\``)
+        await slackService.sendMessage(`Mailer Error: \`\`\`${JSON.stringify(err, null, 2)}\`\`\``)
     }
 }
