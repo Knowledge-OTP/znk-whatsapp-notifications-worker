@@ -31,7 +31,8 @@ module.exports = async function(job) {
                         educator = `${lesson.substitute.firstName} ${lesson.substitute.lastName}`
                         educatorId = lesson.substitute.educatorUserId
                     }
-                    const educatorDocument = await userCursor.findOne({_id: new ObjectId(educatorId)}const result = await client.database.collection('calendarevents').updateOne(filter, updateDoc, options);
+                    const educatorDocument = await userCursor.findOne({_id: new ObjectId(educatorId)})
+                    const result = await client.database.collection('calendarevents').updateOne(filter, updateDoc, options);
                     await slackService.sendMessage(`Student: ${student} with Educator: ${educator} on ${moment(lesson.startDate).toISOString()} ${moment(lesson.startDate).tz(educatorDocument.timezone).format('Z')} for ${lesson.service.name} ${lesson.topic.name}`, process.env.SLACK_CHANNEL)
                     console.log(`${result.matchedCount} document(s) matched the filter, updated ${result.modifiedCount} document(s)`);
                 }
