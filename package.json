@@ -14,6 +14,7 @@
     "dotenv": "^8.2.0",
     "ejs": "^3.0.2",
     "mandrill-api": "^1.0.45",
+    "moment-timezone": "^0.5.33",
     "mongodb": "^3.5.5"
   }
 }
