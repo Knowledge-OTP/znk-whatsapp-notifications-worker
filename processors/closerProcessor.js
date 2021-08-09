@@ -14,7 +14,7 @@ module.exports = async function(job) {
         console.log('init lesson: ', lessonId)
         const lesson = await calendarCursor.findOne({_id: new ObjectId(lessonId)})
         if (lesson) {
-            if (lesson.status === 'scheduled') {
+            if (lesson.status === 'scheduledd') {
                 if (!lesson.notes || lesson.notes.status === 'draft') {
                     //close lesson and send message
                     const student = lesson.kind === 'group-lesson' ? 'Group Lesson' : `${lesson.student.firstName} ${lesson.student.lastName}`
@@ -38,8 +38,8 @@ module.exports = async function(job) {
                 }
             }
         } else {
-            console.log('Lesson not found')
-            await slackService.sendMessage(`Couldn't solve location of ${lessonId} because it wasn't found`)
+            //console.log('Lesson not found')
+            //await slackService.sendMessage(`Couldn't solve location of ${lessonId} because it wasn't found`)
         }
     }
     catch (e) {
