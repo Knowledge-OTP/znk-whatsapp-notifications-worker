@@ -22,10 +22,10 @@ const mailerQueue = new Queue('mailer', {
 mailerQueue.process(mailerProcessor)
 
 // Lesson Closer Queue
-const closerQueue = new Queue('closer', {
-  redis,
-})
-closerQueue.process(closerProcessor)
+// const closerQueue = new Queue('closer', {
+//   redis,
+// })
+// closerQueue.process(closerProcessor)
 
 var http = require('http');
 try{
