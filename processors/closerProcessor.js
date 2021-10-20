@@ -14,7 +14,7 @@ module.exports = async function(job) {
         console.log('init lesson: ', lessonId)
         const lesson = await calendarCursor.findOne({_id: new ObjectId(lessonId)})
         if (lesson) {
-            if (lesson.status === 'scheduledd') {
+            if (lesson.status === 'scheduled') {
                 if (!lesson.notes || lesson.notes.status === 'draft') {
                     //close lesson and send message
                     const student = lesson.kind === 'group-lesson' ? 'Group Lesson' : `${lesson.student.firstName} ${lesson.student.lastName}`
