@@ -5,9 +5,7 @@ const ObjectId = require('mongodb').ObjectId;
 module.exports = async function(job) {
     const {mailOptions: mailOptionsAux} = job.data
     try {        
-        console.log('---- Starting Email Sender ----');
-        //queda desactivado el if
-        if (mailOptionsAux.templateName === 'lp-edu-lesson-list-reminder' && false) {
+        if (mailOptionsAux.templateName === 'lp-edu-lesson-list-reminder') {
             const client = await mongo.connectToDatabase(process.env.MONGO_URL)
             const calendarCursor = client.database.collection('calendarevents')            
             let finalLessonsCards = ''
