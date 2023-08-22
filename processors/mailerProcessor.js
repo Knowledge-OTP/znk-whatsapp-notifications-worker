@@ -2,6 +2,7 @@ const mailerService = require('../utils/mandrill')
 const slackService = require('../utils/slack')
 const mongo = require('../utils/mongo')
 const ObjectId = require('mongodb').ObjectId;
+const moment = require('moment-timezone');
 module.exports = async function(job) {
     const {mailOptions: mailOptionsAux} = job.data
     try {        
@@ -36,12 +37,30 @@ module.exports = async function(job) {
                 return mailSent
             }
             return null
-        } else {
+        } else if (mailOptionsAux.templateName === 'lp-stu-lesson-reminder') {
+            const today = moment().toDate()
             let mailOptions = mailOptionsAux
-            // revisar fecha de la leccion que viene acá adentro. Si esta es del pasado, no envair el mail
-            const mailSent = await mailerService.sendEmail(mailOptions)
-            return mailSent
+            const params = mailOptions.params
+            let lessonDate = null
+            for (let index = 0; index < params.length; index++) {
+                if (params[index]?.name === 'LESSON_DATE') {
+                     lessonDate = params[index].content
+                    }
+                }
+                if (lessonDate) {
+                    const parsedDate = moment(lessonDate, 'MMMM Do, YYYY');
+                    const lessonIsoDate = parsedDate.format('YYYY-MM-DDTHH:mm:ss.SSS') + 'Z';
+                    if (moment(lessonIsoDate).isBefore(today)) {
+                        return }
+                    let mailOptions = mailOptionsAux
+                    const mailSent = await mailerService.sendEmail(mailOptions)
+                    return mailSent
         }
+    } else {
+        let mailOptions = mailOptionsAux
+        const mailSent = await mailerService.sendEmail(mailOptions)
+        return mailSent
+    }
     } catch (err) {
         console.log('Errored')
         console.log(JSON.stringify(err))
