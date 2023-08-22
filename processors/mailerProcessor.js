@@ -7,7 +7,7 @@ module.exports = async function(job) {
     try {        
         console.log('---- Starting Email Sender ----');
         //queda desactivado el if
-        if (mailOptionsAux.templateName === 'lp-edu-lesson-list-reminder' && false) {
+        if (mailOptionsAux.templateName === 'lp-edu-lesson-list-reminder') {
             const client = await mongo.connectToDatabase(process.env.MONGO_URL)
             const calendarCursor = client.database.collection('calendarevents')            
             let finalLessonsCards = ''
@@ -38,6 +38,7 @@ module.exports = async function(job) {
             return null
         } else {
             let mailOptions = mailOptionsAux
+            // revisar fecha de la leccion que viene acá adentro. Si esta es del pasado, no envair el mail
             const mailSent = await mailerService.sendEmail(mailOptions)
             return mailSent
         }

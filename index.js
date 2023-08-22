@@ -1,4 +1,4 @@
-// require('dotenv').config({path: "./.env/.env.dev.json"})
+require('dotenv').config({path: "./.env/.env.dev.json"})
 const messageProcessor = require('./processors/messageProcessor')
 const mailerProcessor = require('./processors/mailerProcessor')
 const closerProcessor = require('./processors/closerProcessor')
@@ -9,6 +9,8 @@ const redis = {
   port: process.env.REDIS_PORT,
   password: process.env.REDIS_PASS,
 }
+
+//comentar desde acá
 // Whatsapp/Frontapp Queue
 const messagerQueue = new Queue('messager', {
   redis,
@@ -37,4 +39,22 @@ try{
   console.log('http server errored')
   console.log({e})
 }
+//hasta acá
 
+// import { createClient } from 'redis';
+
+// async function readQuotes() {
+//   try {
+//     const redis_uri = redis. || process.env['REDIS_URI'] || '';
+//     const redis = createClient({ url: redis_uri });
+//     await redis.connect();
+
+//     const keys = await redis.keys('*');
+//     console.log(keys);
+
+//   } catch (err) {
+//     console.error(err);
+//   }
+// }
+
+// readQuotes()
