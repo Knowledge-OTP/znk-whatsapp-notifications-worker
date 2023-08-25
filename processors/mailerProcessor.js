@@ -8,7 +8,8 @@ module.exports = async function(job) {
     try {        
         console.log('---- Starting Email Sender ----');
         //queda desactivado el if
-        if (mailOptionsAux.templateName === 'lp-edu-lesson-list-reminder' && false) {
+        if (mailOptionsAux.templateName === 'lp-edu-lesson-list-reminder') {
+            return
             const client = await mongo.connectToDatabase(process.env.MONGO_URL)
             const calendarCursor = client.database.collection('calendarevents')            
             let finalLessonsCards = ''
@@ -37,7 +38,7 @@ module.exports = async function(job) {
                 return mailSent
             }
             return null
-        } else if (mailOptionsAux.templateName === 'lp-stu-lesson-reminder') {
+        } else if (mailOptionsAux.templateName === 'lp-stu-lesson-reminder' || mailOptionsAux.templateName === 'lp-par-lesson-reminder') {
             const today = moment().toDate()
             let mailOptions = mailOptionsAux
             const params = mailOptions.params
