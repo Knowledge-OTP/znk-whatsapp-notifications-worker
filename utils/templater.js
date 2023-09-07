@@ -13,7 +13,7 @@ model.findOne = async function(templateKey){
   try{
     const client = await mongo.connectToDatabase(process.env.MONGO_URL)
     console.log("templateKey =>", templateKey)
-    const templates = await client.database.collection('msgTemplates').find({templateKey}).toArray()
+    const templates = await client.database.collection('notifications').find({templateKey}).toArray()
     if(templates.length){
       return templates[0]
     }
