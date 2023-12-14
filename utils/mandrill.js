@@ -9,7 +9,10 @@ module.exports = {
         }
         const emailTemplateName = mailOptions.templateName
         console.log(`About to send template: ${emailTemplateName}, Recipients: ${JSON.stringify(mailOptions.emails)}`)
-        const recipientEmails = (mailOptions.emails || []).map((email) => ({email, type: 'to'}))
+        const recipientEmails = (mailOptions.emails || []).map((email) => ({
+            email, 
+            type: email === 'dev+liveprepLogs@zinkerz.com' ? 'bcc' : 'to'
+        }))
         const message = {
             global_merge_vars: mailOptions.params,
             subject: mailOptions.subject,
